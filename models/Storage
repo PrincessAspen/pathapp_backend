@@ -1,0 +1,146 @@
+from sqlmodel import Field, SQLModel
+from typing import Optional
+from sqlalchemy.dialects.postgresql import JSONB
+
+class Base(SQLModel, table=True):
+    id: int = Field(default=None, primary_key=True, index=True, nullable=False)
+
+class CasterType(Base):
+    __tablename__ = 'caster_types'
+
+    name: str = Field(nullable=False)
+    focus_type: str = Field(nullable=False, default="None")  # Divine, Arcane, etc.
+    caster_type: str = Field(nullable=False, default="None")  # Spontaneous, Prepared
+    preparation_type: str = Field(nullable=False, default="None")  # Daily, At-will, etc.
+    spells_per_day: dict = Field(sa_type=JSONB, nullable=True, default={})
+    spells_known: dict = Field(sa_type=JSONB, nullable=True, default={})
+
+class CharacterClass(Base):
+    __tablename__ = 'character_classes'
+
+    name: str = Field(nullable=False)
+    hit_die: int = Field(nullable=False, default=6)
+    # Using default=0 for progression fields to indicate "no progression"
+    bab_progression: int = Field(nullable=False, default=0)
+    fort_progression: int = Field(nullable=False, default=0)
+    ref_progression: int = Field(nullable=False, default=0)
+    will_progression: int = Field(nullable=False, default=0)
+    skill_points: int = Field(nullable=False, default=2)
+    class_skills: list = Field(sa_type=JSONB, nullable=False, default=[])
+    proficiencies: list = Field(sa_type=JSONB, nullable=False, default=[])
+    caster_type_id: Optional[int] = Field(default=None, foreign_key="caster_types.id")
+
+class Race(Base):
+    __tablename__ = 'races'
+
+    name: str = Field(nullable=False)
+    stat_modifiers: dict = Field(sa_type=JSONB, nullable=False, default={})
+    size_category: str = Field(nullable=False, default="Medium")
+    starting_languages: list = Field(sa_type=JSONB, nullable=False, default=[])
+    racial_traits: list = Field(sa_type=JSONB, nullable=False, default=[])
+
+class RacialTrait(Base):
+    __tablename__ = 'racial_traits'
+
+    category: str = Field(nullable=False, default="General")
+    description: str = Field(nullable=False, default="")
+    numeric_modifier: Optional[float] = Field(nullable=True)
+
+class BABProgression(Base):
+    __tablename__ = 'bab_progressions'
+
+    progression_type: str = Field(nullable=False, default="Poor")
+    values: dict = Field(sa_type=JSONB, nullable=False, default={})
+
+class SavingThrowProgression(Base):
+    __tablename__ = 'saving_throw_progressions'
+
+    progression_type: str = Field(nullable=False, default="Poor")
+    values: dict = Field(sa_type=JSONB, nullable=False, default={})
+
+class Skill(Base):
+    __tablename__ = 'skills'
+
+    name: str = Field(nullable=False)
+    modifying_stat: int = Field(nullable=False, default=0)  # 0 could represent "None" or a default stat
+    untrained: bool = Field(nullable=False, default=False)
+
+class Feat(Base):
+    __tablename__ = 'feats'
+
+    name: str = Field(nullable=False)
+    description: str = Field(nullable=False, default="")
+    numeric_modifier: Optional[float] = Field(nullable=True)
+    level_requirement: int = Field(nullable=False, default=1)
+    prerequisites: list = Field(sa_type=JSONB, nullable=False, default=[])
+
+class Spell(Base):
+    __tablename__ = 'spells'
+
+    name: str = Field(nullable=False)  # Added missing name field
+    spell_level: int = Field(nullable=False, default=0)
+    class_lists: list = Field(sa_type=JSONB, nullable=False, default=[])
+    material_component: Optional[str] = Field(nullable=True)
+    somatic_component: Optional[str] = Field(nullable=True)
+    verbal_component: Optional[str] = Field(nullable=True)
+    school: str = Field(nullable=False, default="Universal")
+    description: str = Field(nullable=False, default="")
+
+class Equipment(Base):
+    __tablename__ = 'equipment'
+
+    name: str = Field(nullable=False)
+    gold_value: Optional[float] = Field(nullable=True)
+    container: bool = Field(nullable=False, default=False)
+    category: str = Field(nullable=False, default="Miscellaneous")
+    rarity: str = Field(nullable=False, default="Common")
+    numeric_modifier: Optional[float] = Field(nullable=True)
+    weight: float = Field(nullable=False, default=0.0)
+
+class Alignment(Base):
+    __tablename__ = 'alignments'
+
+    name: str = Field(nullable=False)
+
+class MoneyValue(Base):
+    __tablename__ = 'money_values'
+
+    platinum: float = Field(nullable=False, default=0.0)
+    gold: float = Field(nullable=False, default=0.0)
+    electrum: float = Field(nullable=False, default=0.0)
+    silver: float = Field(nullable=False, default=0.0)
+
+class Weapon(Base):
+    __tablename__ = 'weapons'
+
+    name: str = Field(nullable=False)  # Added missing name field
+    category: str = Field(nullable=False, default="Simple")
+    type: str = Field(nullable=False, default="Melee")
+    damage_dice: str = Field(nullable=False, default="1d4")
+    damage_type: str = Field(nullable=False, default="Bludgeoning")
+    material: Optional[str] = Field(nullable=True)
+    range: Optional[float] = Field(nullable=True)
+    reach: Optional[float] = Field(nullable=True)
+    special_properties: Optional[str] = Field(nullable=True)
+    weight: float = Field(nullable=False, default=1.0)
+    numeric_modifier: Optional[float] = Field(nullable=True)
+
+class Armor(Base):
+    __tablename__ = 'armor'
+
+    name: str = Field(nullable=False)  # Added missing name field
+    category: str = Field(nullable=False, default="Light")
+    material: Optional[str] = Field(nullable=True)
+    cost: float = Field(nullable=False, default=0.0)
+    armor_bonus: float = Field(nullable=False, default=0.0)
+    max_dex_bonus: float = Field(nullable=False, default=999.0)  # Using 999 to represent "unlimited"
+    armor_check_penalty: float = Field(nullable=False, default=0.0)
+    arcane_spell_failure: float = Field(nullable=False, default=0.0)
+    max_speed: float = Field(nullable=False, default=30.0)
+    weight: float = Field(nullable=False, default=0.0)
+
+class Language(Base):
+    __tablename__ = 'languages'
+
+    name: str = Field(nullable=False)
+    learned_by_races: list = Field(sa_type=JSONB, nullable=False, default=[])
