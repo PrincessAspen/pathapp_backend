@@ -1,4 +1,4 @@
-from sqlmodel import Field, SQLModel, Relationship
+from sqlmodel import SQLModel
 from .base import Base
 
 class Alignment(Base, table=True):

@@ -1,10 +1,10 @@
-from sqlmodel import Field, SQLModel, Relationship
-from typing import List, Optional, Dict
+from sqlmodel import Field, SQLModel
+from typing import Optional
 from .base import Base
 
 class Skill(Base, table=True):
     __tablename__ = 'skills'
 
     name: str = Field(nullable=True)
-    modifying_stat: int = Field(nullable=True, default=0)  # 0 could represent "None" or a default stat
+    modifying_stat_id: Optional[int] = Field(default=None, foreign_key="stats.id")
     untrained: bool = Field(nullable=True, default=False)

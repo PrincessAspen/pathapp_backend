@@ -16,4 +16,4 @@ from .spells import Spell
 from .stats import Stat
 from .caster_type import CasterType
 from .feats import Feat
-from .characters import Character
+from .characters import Character, CharacterArmorLink, CharacterFeatLink, CharacterInventoryLink, CharacterMoneyLink, CharacterSkillLink, CharacterSpellLink, CharacterStatLink, CharacterWeaponLink

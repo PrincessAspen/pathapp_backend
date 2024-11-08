@@ -10,4 +10,3 @@ class Race(Base, table=True):
     stat_modifiers: dict = Field(sa_type=JSONB, nullable=True, default={})
     size_category: str = Field(nullable=True, default="Medium")
     starting_languages: list = Field(sa_type=JSONB, nullable=True, default=[])
-    racial_traits: list = Field(sa_type=JSONB, nullable=True, default=[])
