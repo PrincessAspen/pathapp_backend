@@ -579,12 +579,12 @@ def create_alignment(alignment: Alignment, session: Session = Depends(get_sessio
     session.refresh(alignment)
     return alignment
 
-@app.get("/alignments/", response_model=Alignment)
+@app.get("/alignments/", response_model=List[Alignment])
 def read_alignments(session: Session = Depends(get_session)):
-    alignments = session.get(Alignment)
+    alignments = session.exec(select(Alignment)).all()
     if not alignments:
-        raise HTTPException(status_code=404, detail="Alignments not found")
-    return
+        raise HTTPException(status_code=404, detail="No alignments found")
+    return alignments
 
 @app.get("/alignments/{alignment_id}", response_model=Alignment)
 def read_alignment(alignment_id: int, session: Session = Depends(get_session)):
@@ -762,13 +762,6 @@ def delete_character(character_id: int, session: Session = Depends(get_session))
     session.delete(character)
     session.commit()
     return {"message": "Character deleted successfully"}
-
-from fastapi import FastAPI, Depends, HTTPException
-from sqlmodel import Session, select
-from db import get_session
-from models import Character, Spell, CharacterSpellLink
-
-app = FastAPI()
 
 # Create a link between a character and a spell
 @app.post("/character_spells/", response_model=CharacterSpellLink)
@@ -1095,6 +1088,163 @@ def delete_character_inventory_link(character_id: int, equipment_id: int, sessio
     session.delete(inventory_link)
     session.commit()
     return {"message": "Inventory link deleted successfully"}
+
+# Retrieve all armors
+@app.get("/armor/", response_model=List[Armor])
+def read_all_armor(session: Session = Depends(get_session)):
+    armors = session.exec(select(Armor)).all()
+    return armors
+
+# Retrieve all caster types
+@app.get("/caster_types/", response_model=List[CasterType])
+def read_all_caster_types(session: Session = Depends(get_session)):
+    caster_types = session.exec(select(CasterType)).all()
+    return caster_types
+
+# Retrieve all feats
+@app.get("/feats/", response_model=List[Feat])
+def read_all_feats(session: Session = Depends(get_session)):
+    feats = session.exec(select(Feat)).all()
+    return feats
+
+# Retrieve all money values
+@app.get("/money_values/", response_model=List[MoneyValue])
+def read_all_money_values(session: Session = Depends(get_session)):
+    money_values = session.exec(select(MoneyValue)).all()
+    return money_values
+
+# Retrieve all races
+@app.get("/races/", response_model=List[Race])
+def read_all_races(session: Session = Depends(get_session)):
+    races = session.exec(select(Race)).all()
+    return races
+
+# Retrieve all racial traits
+@app.get("/racial_traits/", response_model=List[RacialTrait])
+def read_all_racial_traits(session: Session = Depends(get_session)):
+    racial_traits = session.exec(select(RacialTrait)).all()
+    return racial_traits
+
+# Retrieve all saving throw progressions
+@app.get("/saving_throw_progressions/", response_model=List[SavingThrowProgression])
+def read_all_saving_throw_progressions(session: Session = Depends(get_session)):
+    saving_throw_progressions = session.exec(select(SavingThrowProgression)).all()
+    return saving_throw_progressions
+
+# Retrieve all skills
+@app.get("/skills/", response_model=List[Skill])
+def read_all_skills(session: Session = Depends(get_session)):
+    skills = session.exec(select(Skill)).all()
+    return skills
+
+# Retrieve all spells
+@app.get("/spells/", response_model=List[Spell])
+def read_all_spells(session: Session = Depends(get_session)):
+    spells = session.exec(select(Spell)).all()
+    return spells
+
+# Retrieve all stats
+@app.get("/stats/", response_model=List[Stat])
+def read_all_stats(session: Session = Depends(get_session)):
+    stats = session.exec(select(Stat)).all()
+    return stats
+
+# Retrieve all weapons
+@app.get("/weapons/", response_model=List[Weapon])
+def read_all_weapons(session: Session = Depends(get_session)):
+    weapons = session.exec(select(Weapon)).all()
+    return weapons
+
+# Retrieve all character classes
+@app.get("/character_classes/", response_model=List[CharacterClass])
+def read_all_character_classes(session: Session = Depends(get_session)):
+    character_classes = session.exec(select(CharacterClass)).all()
+    return character_classes
+
+# Retrieve all class abilities
+@app.get("/class_abilities/", response_model=List[ClassAbility])
+def read_all_class_abilities(session: Session = Depends(get_session)):
+    class_abilities = session.exec(select(ClassAbility)).all()
+    return class_abilities
+
+# Retrieve all alignments
+@app.get("/alignments/", response_model=List[Alignment])
+def read_all_alignments(session: Session = Depends(get_session)):
+    alignments = session.exec(select(Alignment)).all()
+    return alignments
+
+# Retrieve all BAB progressions
+@app.get("/bab_progressions/", response_model=List[BABProgression])
+def read_all_bab_progressions(session: Session = Depends(get_session)):
+    bab_progressions = session.exec(select(BABProgression)).all()
+    return bab_progressions
+
+# Retrieve all equipment
+@app.get("/equipment/", response_model=List[Equipment])
+def read_all_equipment(session: Session = Depends(get_session)):
+    equipment = session.exec(select(Equipment)).all()
+    return equipment
+
+# Retrieve all languages
+@app.get("/languages/", response_model=List[Language])
+def read_all_languages(session: Session = Depends(get_session)):
+    languages = session.exec(select(Language)).all()
+    return languages
+
+# Retrieve all characters
+@app.get("/characters/", response_model=List[Character])
+def read_all_characters(session: Session = Depends(get_session)):
+    characters = session.exec(select(Character)).all()
+    return characters
+
+# Retrieve all character spells
+@app.get("/character_spells/", response_model=List[CharacterSpellLink])
+def read_all_character_spells(session: Session = Depends(get_session)):
+    character_spells = session.exec(select(CharacterSpellLink)).all()
+    return character_spells
+
+# Retrieve all character feats
+@app.get("/character_feats/", response_model=List[CharacterFeatLink])
+def read_all_character_feats(session: Session = Depends(get_session)):
+    character_feats = session.exec(select(CharacterFeatLink)).all()
+    return character_feats
+
+# Retrieve all character weapons
+@app.get("/character_weapons/", response_model=List[CharacterWeaponLink])
+def read_all_character_weapons(session: Session = Depends(get_session)):
+    character_weapons = session.exec(select(CharacterWeaponLink)).all()
+    return character_weapons
+
+# Retrieve all character armors
+@app.get("/character_armors/", response_model=List[CharacterArmorLink])
+def read_all_character_armors(session: Session = Depends(get_session)):
+    character_armors = session.exec(select(CharacterArmorLink)).all()
+    return character_armors
+
+# Retrieve all character money links
+@app.get("/character_money/", response_model=List[CharacterMoneyLink])
+def read_all_character_money(session: Session = Depends(get_session)):
+    character_money = session.exec(select(CharacterMoneyLink)).all()
+    return character_money
+
+# Retrieve all character stats links
+@app.get("/character_stats/", response_model=List[CharacterStatLink])
+def read_all_character_stats(session: Session = Depends(get_session)):
+    character_stats = session.exec(select(CharacterStatLink)).all()
+    return character_stats
+
+# Retrieve all character skills links
+@app.get("/character_skills/", response_model=List[CharacterSkillLink])
+def read_all_character_skills(session: Session = Depends(get_session)):
+    character_skills = session.exec(select(CharacterSkillLink)).all()
+    return character_skills
+
+# Retrieve all character inventory links
+@app.get("/character_inventory/", response_model=List[CharacterInventoryLink])
+def read_all_character_inventory(session: Session = Depends(get_session)):
+    character_inventory = session.exec(select(CharacterInventoryLink)).all()
+    return character_inventory
+
 
 if __name__ == "__main__":
     uvicorn.run("main:app", host="localhost", port=8000, reload=True)
