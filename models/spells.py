@@ -14,3 +14,4 @@ class Spell(Base, table=True):
     verbal_component: Optional[str] = Field(nullable=True)
     school: str = Field(nullable=True, default="Universal")
     description: str = Field(nullable=True, default="")
+    allows_save: bool = Field(nullable=True, default=False)
