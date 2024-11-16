@@ -1,5 +1,6 @@
 from sqlmodel import SQLModel, Field, Relationship
 from .base import Base
+from sqlalchemy.dialects.postgresql import JSONB
 from typing import Optional
 
 class Character(Base, table=True):
@@ -11,19 +12,28 @@ class Character(Base, table=True):
     character_class_id: Optional[int] = Field(default=None, foreign_key="character_classes.id")
     alignment_id: Optional[int] = Field(default=None, foreign_key="alignments.id")
     save_progression_type: Optional[str] = Field(default=None, nullable=True)  # e.g., "Good", "Poor", or a custom string
+    feats: Optional[list] = Field(sa_type=JSONB, default=None, nullable=True)
+    spells: Optional[list] = Field(sa_type=JSONB, default=None, nullable=True)
+    stats: Optional[list] = Field(sa_type=JSONB, default=None, nullable=True)
+    skills: Optional[list] = Field(sa_type=JSONB, default=None, nullable=True)
+    weapons: Optional[list] = Field(sa_type=JSONB, default=None, nullable=True)
+    armor: Optional[list] = Field(sa_type=JSONB, default=None, nullable=True)
+    inventory_items: Optional[list] = Field(sa_type=JSONB, default=None, nullable=True)
+    money: Optional[list] = Field(sa_type=JSONB, default=None, nullable=True)
 
     # Relationships without List or cascade delete
-    feats: Optional["CharacterFeatLink"] = Relationship()
-    spells: Optional["CharacterSpellLink"] = Relationship()
-    stats: Optional["CharacterStatLink"] = Relationship()
-    skills: Optional["CharacterSkillLink"] = Relationship()
-    weapons: Optional["CharacterWeaponLink"] = Relationship()
-    armor: Optional["CharacterArmorLink"] = Relationship()
-    inventory_items: Optional["CharacterInventoryLink"] = Relationship()
-    money: Optional["CharacterMoneyLink"] = Relationship()
+    # feats: Optional["CharacterFeatLink"] = Relationship()
+    # spells: Optional["CharacterSpellLink"] = Relationship()
+    # stats: Optional["CharacterStatLink"] = Relationship()
+    # skills: Optional["CharacterSkillLink"] = Relationship()
+    # weapons: Optional["CharacterWeaponLink"] = Relationship()
+    # armor: Optional["CharacterArmorLink"] = Relationship()
+    # inventory_items: Optional["CharacterInventoryLink"] = Relationship()
+    # money: Optional["CharacterMoneyLink"] = Relationship()
 
 # Join tables for many-to-many relationships
 class CharacterFeatLink(Base, table=True):
+    
     character_id: Optional[int] = Field(default=None, foreign_key="characters.id", primary_key=True)
     feat_id: Optional[int] = Field(default=None, foreign_key="feats.id", primary_key=True)
 

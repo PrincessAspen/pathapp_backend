@@ -17,3 +17,6 @@ class CharacterClass(Base, table=True):
     proficiencies: list = Field(sa_type=JSONB, nullable=True, default=[])
     caster_type_id: Optional[int] = Field(default=None, foreign_key="caster_types.id")
     starting_spells: list = Field(sa_type=JSONB, nullable=True)
+    starting_weapons: list = Field(sa_type=JSONB, nullable=True)
+    starting_armor: list = Field(sa_type=JSONB, nullable=True)
+    starting_inventory: list = Field(sa_type=JSONB, nullable=True)

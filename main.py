@@ -729,10 +729,18 @@ def delete_language(language_id: int, session: Session = Depends(get_session)):
 
 @app.post("/characters/", response_model=Character)
 def create_character(character: Character, session: Session = Depends(get_session)):
-    session.add(character)
-    session.commit()
-    session.refresh(character)
-    return character
+    try:
+        # Create a new character object and commit to the database
+        db_character = Character(**character.dict())
+        session.add(db_character)
+        session.commit()
+        session.refresh(db_character)  # Refresh to get the updated object with ID
+        
+        return db_character
+    except Exception as e:
+        # Handle any exceptions (e.g., database errors)
+        session.rollback()  # Rollback in case of error
+        raise HTTPException(status_code=400, detail=f"Error creating character: {str(e)}")
 
 @app.get("/characters/{character_id}", response_model=Character)
 def read_character(character_id: int, session: Session = Depends(get_session)):
