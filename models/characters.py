@@ -8,6 +8,8 @@ class Character(Base, table=True):
     name: str = Field(nullable=False)
     level: Optional[int] = Field(default=1)  # Track the character's current level
 
+    user_id: str = Field(nullable=False)
+
     # Foreign keys for single reference columns
     character_class_id: Optional[int] = Field(default=None, foreign_key="character_classes.id")
     alignment_id: Optional[int] = Field(default=None, foreign_key="alignments.id")
@@ -20,6 +22,7 @@ class Character(Base, table=True):
     armor: Optional[list] = Field(sa_type=JSONB, default=None, nullable=True)
     inventory_items: Optional[list] = Field(sa_type=JSONB, default=None, nullable=True)
     money: Optional[list] = Field(sa_type=JSONB, default=None, nullable=True)
+    race_id: Optional[int] = Field(default=None, foreign_key="races.id")
 
     # Relationships without List or cascade delete
     # feats: Optional["CharacterFeatLink"] = Relationship()

@@ -54,6 +54,16 @@ def check_current_credentials(credentials: Annotated[HTTPAuthorizationCredential
     payload = verify_token(token)
     return payload
 
+@app.get("/characters/")
+def get_characters(credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)], session: Session = Depends(get_session)):
+    payload = check_current_credentials(credentials)  # Get user info from the token
+    user_id = payload["sub"]  # Extract the `sub` from the JWT payload, which is the user's `uid`
+
+    # Query the characters for the authenticated user (user_id)
+    characters = session.exec(select(Character).where(Character.user_id == user_id)).all()
+
+    return characters
+
 @app.post("/armor/", response_model=Armor)
 def create_armor(armor: Armor, session: Session = Depends(get_session)):
     session.add(armor)
@@ -727,20 +737,18 @@ def delete_language(language_id: int, session: Session = Depends(get_session)):
     return {"message": "Language deleted successfully"}
 
 
-@app.post("/characters/", response_model=Character)
-def create_character(character: Character, session: Session = Depends(get_session)):
-    try:
-        # Create a new character object and commit to the database
-        db_character = Character(**character.dict())
-        session.add(db_character)
-        session.commit()
-        session.refresh(db_character)  # Refresh to get the updated object with ID
-        
-        return db_character
-    except Exception as e:
-        # Handle any exceptions (e.g., database errors)
-        session.rollback()  # Rollback in case of error
-        raise HTTPException(status_code=400, detail=f"Error creating character: {str(e)}")
+@app.post("/characters/")
+def create_character(character: Character, credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)], session: Session = Depends(get_session)):
+    payload = check_current_credentials(credentials)  # Get user info from the token
+    user_id = payload["sub"]  # Extract user_id from the token
+    
+    # Assign the user_id to the character
+    character.user_id = user_id  # Link the character with the authenticated user
+    
+    session.add(character)
+    session.commit()
+    session.refresh(character)
+    return character
 
 @app.get("/characters/{character_id}", response_model=Character)
 def read_character(character_id: int, session: Session = Depends(get_session)):
@@ -750,26 +758,56 @@ def read_character(character_id: int, session: Session = Depends(get_session)):
     return character
 
 @app.put("/characters/{character_id}", response_model=Character)
-def update_character(character_id: int, character_update: Character, session: Session = Depends(get_session)):
+def update_character(
+    character_id: int,
+    character_update: Character,  # The updated character data will be provided in the request body
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    session: Session = Depends(get_session)
+):
+    payload = check_current_credentials(credentials)  # Get user info from the token
+    user_id = payload["sub"]  # Extract the `sub` (user ID) from the JWT payload
+
+    # Retrieve the character by its ID
     character = session.get(Character, character_id)
     if not character:
         raise HTTPException(status_code=404, detail="Character not found")
-    
+
+    # Ensure the character belongs to the authenticated user
+    if character.user_id != user_id:
+        raise HTTPException(status_code=403, detail="You can only update your own characters")
+
+    # Update the character's fields
     for key, value in character_update.dict(exclude_unset=True).items():
         setattr(character, key, value)
-    
+
     session.commit()
     session.refresh(character)
     return character
 
+
 @app.delete("/characters/{character_id}")
-def delete_character(character_id: int, session: Session = Depends(get_session)):
+def delete_character(
+    character_id: int,
+    credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)],
+    session: Session = Depends(get_session)
+):
+    payload = check_current_credentials(credentials)  # Get user info from the token
+    user_id = payload["sub"]  # Extract the `sub` (user ID) from the JWT payload
+
+    # Retrieve the character by its ID
     character = session.get(Character, character_id)
     if not character:
         raise HTTPException(status_code=404, detail="Character not found")
+
+    # Ensure the character belongs to the authenticated user
+    if character.user_id != user_id:
+        raise HTTPException(status_code=403, detail="You can only delete your own characters")
+
+    # Delete the character
     session.delete(character)
     session.commit()
     return {"message": "Character deleted successfully"}
+
 
 # Create a link between a character and a spell
 @app.post("/character_spells/", response_model=CharacterSpellLink)
