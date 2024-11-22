@@ -10,7 +10,7 @@ from models import Armor, CasterType, Feat, MoneyValue, Race, RacialTrait, Savin
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from config import SUPABASE_SECRET_KEY, JWT_ALGORITHM   
 
-app = FastAPI()
+app = FastAPI(redirect_slashes=False)
 
 origins = [
     'http://localhost',
