@@ -16,7 +16,7 @@ origins = [
     'http://localhost',
     'http://localhost:3000',
     'http://localhost:5173',
-    'http://pathforger.netlify.app'
+    'https://pathforger.netlify.app/'
 ]
 
 app.add_middleware(
