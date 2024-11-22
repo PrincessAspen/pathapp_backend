@@ -31,7 +31,6 @@ app.add_middleware(
 def root():
     return {"message": "Hello World"}
 
-app.mount("/images", StaticFiles(directory="images"), name="images")
 
 # Security dependency
 security = HTTPBearer()
