@@ -94,15 +94,6 @@ def get_characters(credentials: Annotated[HTTPAuthorizationCredentials, Depends(
 
     return characters
 
-
-
-
-
-
-
-
-
-
 @app.post("/characters/")
 def create_character(character: Character, credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)], session: Session = Depends(get_session)):
     payload = check_current_credentials(credentials)  # Get user info from the token
