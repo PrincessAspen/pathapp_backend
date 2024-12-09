@@ -6,21 +6,21 @@ from typing import List
 
 router = APIRouter()
 
-@router.post("/bab_progressions/", response_model=BABProgression)
+@router.post("/", response_model=BABProgression)
 def create_bab_progression(bab_progression: BABProgression, session: Session = Depends(get_session)):
     session.add(bab_progression)
     session.commit()
     session.refresh(bab_progression)
     return bab_progression
 
-@router.get("/bab_progressions/{bab_progression_id}", response_model=BABProgression)
+@router.get("/{bab_progression_id}", response_model=BABProgression)
 def read_bab_progression(bab_progression_id: int, session: Session = Depends(get_session)):
     bab_progression = session.get(BABProgression, bab_progression_id)
     if not bab_progression:
         raise HTTPException(status_code=404, detail="BAB Progression not found")
     return bab_progression
 
-@router.put("/bab_progressions/{bab_progression_id}", response_model=BABProgression)
+@router.put("/{bab_progression_id}", response_model=BABProgression)
 def update_bab_progression(bab_progression_id: int, bab_progression_update: BABProgression, session: Session = Depends(get_session)):
     bab_progression = session.get(BABProgression, bab_progression_id)
     if not bab_progression:
@@ -33,7 +33,7 @@ def update_bab_progression(bab_progression_id: int, bab_progression_update: BABP
     session.refresh(bab_progression)
     return bab_progression
 
-@router.delete("/bab_progressions/{bab_progression_id}")
+@router.delete("/{bab_progression_id}")
 def delete_bab_progression(bab_progression_id: int, session: Session = Depends(get_session)):
     bab_progression = session.get(BABProgression, bab_progression_id)
     if not bab_progression:
@@ -43,7 +43,7 @@ def delete_bab_progression(bab_progression_id: int, session: Session = Depends(g
     return {"message": "BAB Progression deleted successfully"}
 
 # Retrieve all BAB progressions
-@router.get("/bab_progressions/", response_model=List[BABProgression])
+@router.get("/", response_model=List[BABProgression])
 def read_all_bab_progressions(session: Session = Depends(get_session)):
     bab_progressions = session.exec(select(BABProgression)).all()
     return bab_progressions

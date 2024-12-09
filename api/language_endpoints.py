@@ -6,21 +6,21 @@ from typing import List
 
 router = APIRouter()
 
-@router.post("/languages/", response_model=Language)
+@router.post("/", response_model=Language)
 def create_language(language: Language, session: Session = Depends(get_session)):
     session.add(language)
     session.commit()
     session.refresh(language)
     return language
 
-@router.get("/languages/{language_id}", response_model=Language)
+@router.get("/{language_id}", response_model=Language)
 def read_language(language_id: int, session: Session = Depends(get_session)):
     language = session.get(Language, language_id)
     if not language:
         raise HTTPException(status_code=404, detail="Language not found")
     return language
 
-@router.put("/languages/{language_id}", response_model=Language)
+@router.put("/{language_id}", response_model=Language)
 def update_language(language_id: int, language_update: Language, session: Session = Depends(get_session)):
     language = session.get(Language, language_id)
     if not language:
@@ -33,7 +33,7 @@ def update_language(language_id: int, language_update: Language, session: Sessio
     session.refresh(language)
     return language
 
-@router.delete("/languages/{language_id}")
+@router.delete("/{language_id}")
 def delete_language(language_id: int, session: Session = Depends(get_session)):
     language = session.get(Language, language_id)
     if not language:
@@ -43,7 +43,7 @@ def delete_language(language_id: int, session: Session = Depends(get_session)):
     return {"message": "Language deleted successfully"}
 
 # Retrieve all languages
-@router.get("/languages/", response_model=List[Language])
+@router.get("/", response_model=List[Language])
 def read_all_languages(session: Session = Depends(get_session)):
     languages = session.exec(select(Language)).all()
     return languages

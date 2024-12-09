@@ -6,28 +6,28 @@ from typing import List
 
 router = APIRouter()
 
-@router.post("/alignments/", response_model=Alignment)
+@router.post("/", response_model=Alignment)
 def create_alignment(alignment: Alignment, session: Session = Depends(get_session)):
     session.add(alignment)
     session.commit()
     session.refresh(alignment)
     return alignment
 
-@router.get("/alignments/", response_model=List[Alignment])
+@router.get("/", response_model=List[Alignment])
 def read_alignments(session: Session = Depends(get_session)):
     alignments = session.exec(select(Alignment)).all()
     if not alignments:
         raise HTTPException(status_code=404, detail="No alignments found")
     return alignments
 
-@router.get("/alignments/{alignment_id}", response_model=Alignment)
+@router.get("/{alignment_id}", response_model=Alignment)
 def read_alignment(alignment_id: int, session: Session = Depends(get_session)):
     alignment = session.get(Alignment, alignment_id)
     if not alignment:
         raise HTTPException(status_code=404, detail="Alignment not found")
     return alignment
 
-@router.put("/alignments/{alignment_id}", response_model=Alignment)
+@router.put("/{alignment_id}", response_model=Alignment)
 def update_alignment(alignment_id: int, alignment_update: Alignment, session: Session = Depends(get_session)):
     alignment = session.get(Alignment, alignment_id)
     if not alignment:
@@ -40,7 +40,7 @@ def update_alignment(alignment_id: int, alignment_update: Alignment, session: Se
     session.refresh(alignment)
     return alignment
 
-@router.delete("/alignments/{alignment_id}")
+@router.delete("/{alignment_id}")
 def delete_alignment(alignment_id: int, session: Session = Depends(get_session)):
     alignment = session.get(Alignment, alignment_id)
     if not alignment:
@@ -50,7 +50,7 @@ def delete_alignment(alignment_id: int, session: Session = Depends(get_session))
     return {"message": "Alignment deleted successfully"}
 
 # Retrieve all alignments
-@router.get("/alignments/", response_model=List[Alignment])
+@router.get("/", response_model=List[Alignment])
 def read_all_alignments(session: Session = Depends(get_session)):
     alignments = session.exec(select(Alignment)).all()
     return alignments
