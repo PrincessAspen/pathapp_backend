@@ -6,6 +6,11 @@ from typing import List, Annotated
 
 router = APIRouter()
 
+@router.get("/", response_model=List[CharacterClass])
+def read_all_classes(session: Session = Depends(get_session)):
+    character_classes = session.exec(select(CharacterClass)).all()
+    return character_classes
+
 @router.post("/", response_model=CharacterClass)
 def create_character_class(character_class: CharacterClass, session: Session = Depends(get_session)):
     session.add(character_class)

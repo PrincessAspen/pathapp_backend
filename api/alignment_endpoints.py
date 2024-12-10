@@ -6,7 +6,7 @@ from typing import List
 
 router = APIRouter()
 
-@router.post("/", response_model=Alignment)
+@router.post("/", response_model=List[Alignment])
 def create_alignment(alignment: Alignment, session: Session = Depends(get_session)):
     session.add(alignment)
     session.commit()

@@ -6,7 +6,7 @@ from typing import List
 
 router = APIRouter()
 
-@router.get("/", response_model=Race)
+@router.get("/", response_model=List[Race])
 def read_all_races(session: Session = Depends(get_session)):
     races = session.exec(select(Race)).all()
     return races
