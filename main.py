@@ -26,9 +26,11 @@ from api.spell_endpoints import router as spell_router
 from api.weapon_endpoints import router as weapon_router
 from api.class_ability_endpoints import router as ability_router
 from api.racial_trait_endpoints import router as trait_router
+# from api.creation_endpoint import router as creation_router
 
 app = FastAPI(redirect_slashes=False)
 
+# app.include_router(creation_router, prefix="/creation", tags=["Character Creation"])
 app.include_router(ability_router, prefix="/class_abilities", tags=["Class Abilities"])
 app.include_router(trait_router, prefix="/racial_traits", tags=["Racial Traits"])
 app.include_router(weapon_router, prefix="/weapons", tags=["Weapons"])
