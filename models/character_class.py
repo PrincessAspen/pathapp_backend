@@ -20,3 +20,4 @@ class CharacterClass(Base, table=True):
     starting_weapons: list = Field(sa_type=JSONB, nullable=True)
     starting_armor: list = Field(sa_type=JSONB, nullable=True)
     starting_inventory: list = Field(sa_type=JSONB, nullable=True)
+    casting_stat: Optional[int] = Field(default=None, nullable=True, foreign_key="stats.id")
