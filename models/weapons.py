@@ -16,3 +16,4 @@ class Weapon(Base, table=True):
     special_properties: Optional[str] = Field(nullable=True)
     weight: float = Field(nullable=True, default=1.0)
     numeric_modifier: Optional[float] = Field(nullable=True)
+    gold_value: Optional[float] = Field(nullable=True)

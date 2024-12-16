@@ -8,7 +8,7 @@ class Armor(Base, table=True):
     name: str = Field(nullable=True)  # Added missing name field
     category: str = Field(nullable=True, default="Light")
     material: Optional[str] = Field(nullable=True)
-    cost: float = Field(nullable=True, default=0.0)
+    gold_value: float = Field(nullable=True, default=0.0)
     armor_bonus: float = Field(nullable=True, default=0.0)
     max_dex_bonus: float = Field(nullable=True, default=999.0)  # Using 999 to represent "unlimited"
     armor_check_penalty: float = Field(nullable=True, default=0.0)
