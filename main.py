@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session, select
 from db import get_session
-from models import Character, Armor, CharacterArmorLink, CharacterInventoryLink, CharacterMoneyLink, CharacterSkillLink, Spell, CharacterSpellLink, CharacterStatLink, Weapon, CharacterWeaponLink, Feat, CharacterFeatLink
+from models import Character, Armor, CharacterArmorLink, CharacterInventoryLink, CharacterMoneyLink, CharacterSkillLink, Spell, CharacterSpellLink, CharacterStatLink, Weapon, CharacterWeaponLink, Feat, CharacterFeatLink, Equipment
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from config import SUPABASE_SECRET_KEY, JWT_ALGORITHM   
 from api.race_endpoints import router as race_router
@@ -90,6 +90,27 @@ def check_current_credentials(credentials: Annotated[HTTPAuthorizationCredential
     token = credentials.credentials
     payload = verify_token(token)
     return payload
+
+@app.get("/shop_items/", response_model=List[dict])
+def get_shop_items(session: Session = Depends(get_session)):
+    # Fetch data from each table
+    equipment = session.exec(select(Equipment)).all()
+    armor = session.exec(select(Armor)).all()
+    weapons = session.exec(select(Weapon)).all()
+
+    # Combine the data into a single list
+    combined_items = [
+        {"type": "Equipment", "name": item.name, "gold_value": item.gold_value}
+        for item in equipment
+    ] + [
+        {"type": "Armor", "name": item.name, "gold_value": item.gold_value}
+        for item in armor
+    ] + [
+        {"type": "Weapon", "name": item.name, "gold_value": item.gold_value}
+        for item in weapons
+    ]
+
+    return combined_items
 
 @app.get("/characters/")
 def get_characters(credentials: Annotated[HTTPAuthorizationCredentials, Depends(security)], session: Session = Depends(get_session)):
