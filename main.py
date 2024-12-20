@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from sqlmodel import Session, select
 from db import get_session
-from models import Character, Armor, CharacterArmorLink, CharacterInventoryLink, CharacterMoneyLink, CharacterSkillLink, Spell, CharacterSpellLink, CharacterStatLink, Weapon, CharacterWeaponLink, Feat, CharacterFeatLink, Equipment
+from models import Character, Armor, CharacterArmorLink, CharacterInventoryLink, CharacterMoneyLink, CharacterSkillLink, Spell, CharacterSpellLink, CharacterStatLink, Weapon, CharacterWeaponLink, Feat, CharacterFeatLink, Equipment, CharacterClass, Race, Stat, Skill, Alignment
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 from config import SUPABASE_SECRET_KEY, JWT_ALGORITHM   
 from api.race_endpoints import router as race_router
@@ -90,6 +90,29 @@ def check_current_credentials(credentials: Annotated[HTTPAuthorizationCredential
     token = credentials.credentials
     payload = verify_token(token)
     return payload
+
+@app.get("/character_creation_data/")
+def get_character_creation_data(session: Session = Depends(get_session)):
+    try:
+        # Fetch data from all necessary tables
+        classes = session.exec(select(CharacterClass)).all()
+        races = session.exec(select(Race)).all()
+        stats = session.exec(select(Stat)).all()
+        skills = session.exec(select(Skill)).all()
+        feats = session.exec(select(Feat)).all()
+        alignments = session.exec(select(Alignment)).all()
+
+        # Consolidate the data into a single response
+        return {
+            "classes": classes,
+            "races": races,
+            "stats": stats,
+            "skills": skills,
+            "feats": feats,
+            "alignments": alignments,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/shop_items/", response_model=List[dict])
 def get_shop_items(session: Session = Depends(get_session)):
